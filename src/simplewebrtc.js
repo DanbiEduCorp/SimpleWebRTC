@@ -115,6 +115,10 @@ function SimpleWebRTC(opts) {
         }
     });
 
+    connection.on('customMessage', function (message) {
+        self.emit('customMessage', message);
+    });
+
     connection.on('remove', function (room) {
         if (room.id !== self.connection.getSessionid()) {
             self.webrtc.removePeers(room.id, room.type);
@@ -463,6 +467,10 @@ SimpleWebRTC.prototype.sendFile = function () {
         return this.emit('error', new Error('DataChannelNotSupported'));
     }
 
+};
+
+SimpleWebRTC.prototype.sendCustomMessage = function (message) {
+    this.connection.emit('customMessage', message);
 };
 
 module.exports = SimpleWebRTC;
