@@ -13053,6 +13053,23 @@ SimpleWebRTC.prototype.stopLocalVideo = function () {
     this.webrtc.stop();
 };
 
+SimpleWebRTC.prototype.changeLocalVideo = function (media) {
+    this.webrtc.stop();
+
+    var self = this;
+    this.webrtc.start(media || this.config.media, function (err, stream) {
+        if (err) return self.emit('localMediaError', err);
+
+        attachMediaStream(stream, self.getLocalVideoContainer(), self.config.localVideo);
+
+        if (self.roomName) {
+            var room = self.roomName;
+            self.leaveRoom();
+            self.joinRoom(room);
+        }
+    });
+};
+
 // this accepts either element ID or element
 // and either the video tag itself or a container
 // that will be used to put the video tag into.
