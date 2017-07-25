@@ -490,4 +490,12 @@ SimpleWebRTC.prototype.sendCustomMessage = function (message) {
     this.connection.emit('customMessage', message);
 };
 
+SimpleWebRTC.prototype.getStats = function (peerIndex, callback) {
+    if(peerIndex >= this.webrtc.peers.length) {
+        return callback('index out of bound');
+    }
+
+    this.webrtc.peers[peerIndex].getStats(callback);
+};
+
 module.exports = SimpleWebRTC;
