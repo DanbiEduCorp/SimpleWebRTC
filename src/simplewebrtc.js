@@ -498,4 +498,11 @@ SimpleWebRTC.prototype.getStats = function (peerIndex, callback) {
     this.webrtc.peers[peerIndex].getStats(callback);
 };
 
+SimpleWebRTC.prototype.dispose = function () {
+    this.leaveRoom();
+    this.stopLocalVideo();
+    this.connection.disconnect();
+    this.connection = null;
+};
+
 module.exports = SimpleWebRTC;

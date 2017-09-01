@@ -16631,6 +16631,66 @@ Peer.prototype.sendFile = function (file) {
     return sender;
 };
 
+function copyProps(src, dst) {
+    if (!dst) dst = {};
+
+    for (var item in src) {
+        if (src.hasOwnProperty(item)) {
+            dst[item] = src[item];
+        }
+    }
+
+    return dst;
+}
+
+function shortenNumber(num) {
+    if (typeof num === 'number') {
+        if (num < 10000) return num;
+        num = Math.floor(num / 100) / 10;
+        if (num < 1000) return num + 'K';
+        num = Math.floor(num / 100) / 10;
+        if (num < 1000) return num + 'M';
+        num = Math.floor(num / 100) / 10;
+        if (num < 1000) return num + 'G';
+        num = Math.floor(num / 100) / 10;
+        return num + 'T';
+    }
+    return num;
+}
+
+function shortenProps(obj) {
+    for (var item in obj) {
+        if (obj.hasOwnProperty(item)) {
+            obj[item] = shortenNumber(obj[item]);
+        }
+    }
+    return obj;
+}
+
+Peer.prototype.getStats = function (callback) {
+    this.pc.getStats().then(function(stat) {
+        var ret = {};
+
+        stat.forEach(function(elem) {
+            if (elem.type === 'inbound-rtp') {
+                if (elem.mediaType === 'audio') {
+                    ret.remoteAudio = shortenProps(copyProps(elem));
+                } else if (elem.mediaType === 'video') {
+                    ret.remoteVideo = shortenProps(copyProps(elem));
+                }
+            } else if (elem.type === 'outbound-rtp') {
+                if (elem.mediaType === 'audio') {
+                    ret.localAudio = shortenProps(copyProps(elem));
+                } else if (elem.mediaType === 'video') {
+                    ret.localVideo = shortenProps(copyProps(elem));
+                }
+            }
+        });
+
+        return callback(null, ret);
+    });
+};
+
 module.exports = Peer;
 
 },{"filetransfer":26,"rtcpeerconnection":44,"util":63,"webrtcsupport":64,"wildemitter":65}],68:[function(require,module,exports){
@@ -17124,6 +17184,21 @@ SimpleWebRTC.prototype.sendFile = function () {
 
 SimpleWebRTC.prototype.sendCustomMessage = function (message) {
     this.connection.emit('customMessage', message);
+};
+
+SimpleWebRTC.prototype.getStats = function (peerIndex, callback) {
+    if(peerIndex >= this.webrtc.peers.length) {
+        return callback('index out of bound');
+    }
+
+    this.webrtc.peers[peerIndex].getStats(callback);
+};
+
+SimpleWebRTC.prototype.dispose = function () {
+    this.leaveRoom();
+    this.stopLocalVideo();
+    this.connection.disconnect();
+    this.connection = null;
 };
 
 module.exports = SimpleWebRTC;
