@@ -16769,6 +16769,8 @@ function SimpleWebRTC(opts) {
         connection = this.connection = this.config.connection;
     }
 
+    this.isChangingLocalMedia = false;
+
     connection.on('connect', function () {
         self.emit('connectionReady', connection.getSessionid());
         self.sessionReady = true;
@@ -16844,7 +16846,9 @@ function SimpleWebRTC(opts) {
 
     // check for readiness
     this.webrtc.on('localStream', function () {
-        self.testReadiness();
+        if (!self.isChangingLocalMedia) {
+            self.testReadiness();
+        }
     });
 
     this.webrtc.on('message', function (payload) {
@@ -17088,7 +17092,9 @@ SimpleWebRTC.prototype.changeLocalVideo = function (media) {
     this.webrtc.stop();
 
     var self = this;
+    this.isChangingLocalMedia = true;
     this.webrtc.start(media || this.config.media, function (err, stream) {
+        self.isChangingLocalMedia = false;
         if (err) return self.emit('localMediaError', err);
 
         attachMediaStream(stream, self.getLocalVideoContainer(), self.config.localVideo);
