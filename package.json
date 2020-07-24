@@ -1,6 +1,6 @@
 {
   "name": "danbi-simplewebrtc",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/DanbiEduCorp/SimpleWebRTC.git"
@@ -9,7 +9,7 @@
   "description": "World's easiest webrtc",
   "dependencies": {
     "filetransfer": "^2.0.4",
-    "localmedia": "^4.0.0",
+    "localmedia": "^5.0.0",
     "rtcpeerconnection": "^8.0.0",
     "webrtcsupport": "^2.2.0",
     "wildemitter": "^1.2.0",
@@ -28,10 +28,10 @@
     "testling": "^1.7.1",
     "travis-multirunner": "^3.0.0",
     "uglify-js": "^2.7.3",
-    "webrtc-adapter": "^4.0.0"
+    "webrtc-adapter": "^6.4.8"
   },
   "peerDependencies": {
-    "webrtc-adapter": "^4.0.0"
+    "webrtc-adapter": "^6.4.8"
   },
   "license": "MIT",
   "scripts": {
